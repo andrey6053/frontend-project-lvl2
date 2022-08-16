@@ -1,18 +1,36 @@
-name: Test-Coverage
-
+name: build
 on:
   push:
     branches:
-      - '**'
+      - master
     tags:
-      - '**'
-
+      - '!*' # Do not execute on tags
+    paths:
+      - src/*
+      - __test__/*
+      - '*.json'
+  pull_request:
+    paths:
+      - '!*.MD'
 jobs:
-  coverage:
+  test:
     strategy:
       matrix:
         platform: [ ubuntu-latest ]
-        node: [ '16' ]
+        node: [ '16', '16' ]
+    name: test/node ${{ matrix.node }}/${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        node-version: ${{ matrix.node }}
+    - run: npm install -g yarn
+    - run: yarn install
+    - run: yarn build
+    - run: yarn test
+  coverage:
+    needs: [ test ]
     name: coverage
     runs-on: ubuntu-latest
     steps:
@@ -20,10 +38,11 @@ jobs:
     - uses: actions/setup-node@master
       with:
         node-version: '16'
-    - run: npm install
-    - run: npm run build --if-present
-    - uses: paambaati/codeclimate-action@v2.7.5
+    - run: npm install -g yarn
+    - run: yarn install
+    - run: yarn build
+    - uses: paambaati/codeclimate-action@v2.2.4
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODE_COVERAGE }}
       with:
-        coverageCommand: npm test -- --coverage --coverageProvider=v8
+        coverageCommand: yarn coverage
