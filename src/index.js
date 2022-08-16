@@ -11,7 +11,7 @@ import {
 } from './cli.js';
 
 const newTree = (obj1, obj2) => {
-  const iter = (key) => { // Функция для сравнения одинаковых свойств
+  const iter = (key) => { 
     if (isObject(obj1[key]) && isObject(obj2[key])) {
       const nested = {
         key,
