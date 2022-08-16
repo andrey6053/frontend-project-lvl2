@@ -10,7 +10,7 @@ program
   .arguments('<filepath1>')
   .arguments('<filepath2>')
   .option('-v, --version', 'output the version number')
-  .option('-f, --format <type>', 'output format')
+  .option('-f, --format <type>', 'output format', 'stylish')
   .action((filepath1, filepath2, type) => {
     const typeFormat = type.format;
     console.log(gendiff(filepath1, filepath2, typeFormat));

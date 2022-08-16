@@ -1,24 +1,45 @@
+import _ from 'lodash';
 import getData from './modules/parsers.js';
+import formate from './modules/index.js';
+import {
+  setAction,
+  isHasBoth,
+  isObject,
+  isHasSingle,
+  getKey,
+  getKeys,
+} from './cli.js';
 
-const gendiff = (firstFile, secondFile) => {
+const newTree = (obj1, obj2) => {
+  const iter = (key) => { // Функция для сравнения одинаковых свойств
+    if (isObject(obj1[key]) && isObject(obj2[key])) {
+      const nested = {
+        key,
+        type: 'nested',
+        children: newTree(obj1[key], obj2[key]),
+      };
+      return nested;
+    } if (obj1[key] === obj2[key]) {
+      return setAction(key, obj1[key], 'unchanged');
+    }
+    return setAction(key, obj1[key], 'changed', obj2[key]);
+  };
+
+  const common = getKeys(obj1, obj2, isHasBoth).map(iter);
+  const unique1 = getKeys(obj1, obj2, isHasSingle)
+    .map((key) => setAction(key, obj1[key], 'removed'));
+  const unique2 = getKeys(obj2, obj1, isHasSingle)
+    .map((key) => setAction(key, obj2[key], 'added'));
+  const result = [...common, ...unique1, ...unique2].flat();
+  return _.sortBy(result, getKey);
+};
+
+const gendiff = (firstFile, secondFile, style) => {
   const data1 = getData(firstFile);
   const data2 = getData(secondFile);
-  let dif = '';
-  /* eslint-disable-next-line */
-  for (const [key, values] of Object.entries(data1)) {
-    if (Object.hasOwn(data2, key)) {
-      data2[key] === values ? dif += `${key}:${values}\n` : dif += `- ${key}:${values}\n+ ${key}:${data2[key]}\n`;
-    } else {
-      dif += `- ${key}:${values}\n`;
-    }
-  }
-  /* eslint-disable-next-line */
-  for (const [key, values] of Object.entries(data2)) {
-    if (!Object.hasOwn(data1, key)) {
-      dif += `+ ${key}:${values}\n`;
-    }
-  }
-  return `{\n${dif}}`;
+  const tree = newTree(data1, data2).flat();
+  const result = formate(tree, style);
+  return result;
 };
 
 export default gendiff;
