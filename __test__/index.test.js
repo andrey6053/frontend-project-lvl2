@@ -143,6 +143,15 @@ test('YAML/JSON json', () => {
   expect(actual1).toBe(right);
 });
 
+test('YAML/JSON default', () => {
+  const path = getFixturePath('right_stylish.txt');
+  const right = fs.readFileSync(path, 'utf-8').trim();
+  const file1 = getFixturePath('file1.yaml');
+  const file2 = getFixturePath('file2.json');
+  const actual1 = gendiff(file1, file2);
+  expect(actual1).toBe(right);
+});
+
 test('Wrong files', () => {
   const path1 = getFixturePath('file1.ym');
   const path2 = getFixturePath('file2.jso');

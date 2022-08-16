@@ -33,7 +33,6 @@ const newTree = (obj1, obj2) => {
   const result = [...common, ...unique1, ...unique2].flat();
   return _.sortBy(result, getKey);
 };
-
 const gendiff = (firstFile, secondFile, style) => {
   const data1 = getData(firstFile);
   const data2 = getData(secondFile);
