@@ -3,15 +3,17 @@ import path from 'path';
 import yaml from 'js-yaml';
 
 const getPath = (filename) => path.resolve(process.cwd(), '__fixtures__', filename);
-const getData = (filename) => {
-  let data;
-  const [, format] = filename.split('.');
+const getFormatData = (filename, format) => {
   switch (format) {
-    case ('json'): data = JSON.parse(fs.readFileSync(getPath(filename), 'utf8')); break;
-    case ('yml'): data = yaml.load(fs.readFileSync(getPath(filename), 'utf8')); break;
-    case ('yaml'): data = yaml.load(fs.readFileSync(getPath(filename), 'utf8')); break;
-    default: data = {}; break;
+    case ('json'): return JSON.parse(fs.readFileSync(getPath(filename), 'utf8'));
+    case ('yml'): return yaml.load(fs.readFileSync(getPath(filename), 'utf8'));
+    case ('yaml'): return yaml.load(fs.readFileSync(getPath(filename), 'utf8'));
+    default: return {};
   }
+};
+const getData = (filename) => {
+  const [, format] = filename.split('.');
+  const data = getFormatData(filename, format);
   return data;
 };
 
