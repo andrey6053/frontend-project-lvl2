@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 
-const getPath = (filename, folder) => path.resolve(process.cwd(), `__fixtures__`, filename);
+const getPath = (filename) => path.resolve(process.cwd(), '__fixtures__', filename);
 const getData = (filename) => {
   let data;
   const [, format] = filename.split('.');
@@ -10,7 +10,7 @@ const getData = (filename) => {
     case ('json'): data = JSON.parse(fs.readFileSync(getPath(filename), 'utf8')); break;
     case ('yml'): data = yaml.load(fs.readFileSync(getPath(filename), 'utf8')); break;
     case ('yaml'): data = yaml.load(fs.readFileSync(getPath(filename), 'utf8')); break;
-    default: console.log('format not support');
+    default: data = {};break;;
   }
   return data;
 };
