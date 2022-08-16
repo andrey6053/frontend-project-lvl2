@@ -10,7 +10,7 @@ const getData = (filename) => {
     case ('json'): data = JSON.parse(fs.readFileSync(getPath(filename), 'utf8')); break;
     case ('yml'): data = yaml.load(fs.readFileSync(getPath(filename), 'utf8')); break;
     case ('yaml'): data = yaml.load(fs.readFileSync(getPath(filename), 'utf8')); break;
-    default: data = {};break;;
+    default: data = {}; break;
   }
   return data;
 };
